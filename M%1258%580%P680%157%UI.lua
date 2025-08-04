@@ -178,7 +178,7 @@ function lib:init(ti, dosplash, visiblekey, deleteprevious)
     search.Parent = main
     search.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
     search.Position = UDim2.new(0.0256588068, 0, 0.0958904102, 0)
-    search.Size = UDim2.new(0, 225, 0, 34)
+    search.Size = UDim2.new(0, 200, 0, 34)
 
     local uc_8 = Instance.new("UICorner")
     uc_8.CornerRadius = UDim.new(0, 9)
