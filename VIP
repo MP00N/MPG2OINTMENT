@@ -1,0 +1,91 @@
+-- 将此脚本放在StarterPlayer/StarterPlayerScripts中
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local player = Players.LocalPlayer
+
+-- 使用Roblox内置VIP图标（已上传，无需外部链接）
+local IMAGE_ID = "rbxassetid://14874020642"  -- Roblox官方VIP图标
+
+local function createOverheadUI(character)
+    local head = character:WaitForChild("Head")
+    
+    -- 创建主BillboardGui
+    local billboard = Instance.new("BillboardGui")
+    billboard.Name = "PlayerVIPTitle"
+    billboard.AlwaysOnTop = true
+    billboard.Size = UDim2.new(0, 300, 0, 100)
+    billboard.StudsOffset = Vector3.new(0, 2.5, 0)  -- 固定在头顶上方
+    billboard.Adornee = head
+    billboard.LightInfluence = 0
+    billboard.Parent = head
+    
+    -- 主容器
+    local container = Instance.new("Frame")
+    container.BackgroundTransparency = 1
+    container.Size = UDim2.new(1, 0, 1, 0)
+    container.Parent = billboard
+
+    -- 图标容器（保持原始比例）
+    local iconContainer = Instance.new("Frame")
+    iconContainer.BackgroundTransparency = 1
+    iconContainer.Size = UDim2.new(0, 40, 0, 40)  -- 固定尺寸容器
+    iconContainer.Position = UDim2.new(0.5, -80, 0.1, 0)  -- 左侧位置
+    iconContainer.Parent = container
+
+    -- 图标（不缩放，保持原始比例）
+    local icon = Instance.new("ImageLabel")
+    icon.Name = "VIPIcon"
+    icon.Image = IMAGE_ID
+    icon.BackgroundTransparency = 1
+    icon.Size = UDim2.new(1, 0, 1, 0)  -- 填满容器
+    icon.ScaleType = Enum.ScaleType.Fit  -- 关键：保持比例不拉伸
+    icon.Parent = iconContainer
+    
+    -- 添加宽高比约束确保不缩放
+    local aspectRatio = Instance.new("UIAspectRatioConstraint")
+    aspectRatio.AspectRatio = 1  -- 1:1正方形比例
+    aspectRatio.DominantAxis = Enum.DominantAxis.Width  -- 固定宽度
+    aspectRatio.Parent = icon
+
+    -- 称号文本
+    local titleText = Instance.new("TextLabel")
+    titleText.Name = "TitleText"
+    titleText.Text = "MP中心 VIP用户"
+    titleText.TextColor3 = Color3.fromRGB(255, 215, 0)  -- 金色
+    titleText.TextStrokeColor3 = Color3.new(0, 0, 0)
+    titleText.TextStrokeTransparency = 0.2
+    titleText.BackgroundTransparency = 1
+    titleText.Font = Enum.Font.GothamBold
+    titleText.TextSize = 24
+    titleText.Size = UDim2.new(0, 0, 0, 0)  -- 自动尺寸
+    titleText.AutomaticSize = Enum.AutomaticSize.XY  -- 根据内容自动调整
+    titleText.Position = UDim2.new(0.5, -70, 0.1, 0)  -- 图标右侧
+    titleText.TextXAlignment = Enum.TextXAlignment.Left
+    titleText.Parent = container
+
+    -- 纯色彩闪耀效果（无缩放）
+    local time = 0
+    RunService.Heartbeat:Connect(function(delta)
+        time = time + delta * 2
+        
+        -- 金色系色彩变化（无缩放）
+        local goldVariation = math.sin(time) * 0.3
+        titleText.TextColor3 = Color3.new(
+            1,  -- 保持红色通道高值
+            0.8 - goldVariation,  -- 绿色通道变化
+            0.1 + goldVariation   -- 蓝色通道变化
+        )
+    end)
+end
+
+-- 角色加载处理
+local function onCharacterAdded(character)
+    createOverheadUI(character)
+end
+
+-- 初始连接
+if player.Character then
+    onCharacterAdded(player.Character)
+end
+
+player.CharacterAdded:Connect(onCharacterAdded)
